@@ -1,0 +1,18 @@
+Useful pages:
+
+https://forums.virtualbox.org/viewtopic.php?p=29267#p29267
+
+https://forums.virtualbox.org/viewtopic.php?t=7930
+
+Master boot record info:
+https://en.wikipedia.org/wiki/Master_boot_record
+
+Ext2 info:
+http://wiki.osdev.org/Ext2
+https://en.wikipedia.org/wiki/Ext2
+http://www.nongnu.org/ext2-doc/ext2.html
+
+
+data is stored little endian -> decimal 1025 is hex 01 04
+
+md5 hash of arduino-1.6.7-linux64.tar.xz is 4bbc976a14ae8d8ace8679cf084b74dc
