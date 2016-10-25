@@ -1,0 +1,53 @@
+<<< for later consideration >>>
+
+CLASS HIERARCHY
+---------------
+device class
+ |-file based
+ |-physical hard drive
+ |-network
+ |-...
+
+partition table reader class
+ |-MBR
+ |-GPT
+ |-...
+
+file system class
+ |-ext2
+ |-fat
+ |-ntfs
+ |-...
+
+
+
+BRIEF PARENT CLASS DESCRIPTION
+------------------------------
+device class (not needed if we focus solely on vdi files)
+holds logic to access the actual place where data resides, be it a file, hard drive, usb drive, etc.
+
+partition table reader (needs better name) (can be integrated into file system class initially)
+contains logic to decipher whatever partition table the device holds
+
+file system class
+holds logic to figure out what file system a partition is
+
+
+
+OVERLOADED FUNCTIONS
+--------------------
+device
+ |-open
+ |-close
+ |-seek
+ |-read
+ |-write
+
+partition table reader
+ |-read table
+ |-write table (?)
+
+file system
+ |-???
+ |-...
+
