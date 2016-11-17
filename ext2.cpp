@@ -19,7 +19,11 @@
 #include <iomanip>
 #include <fcntl.h>
 #include <sys/types.h>
-#include <unistd.h>
+#ifdef _WIN32
+    #include <io.h>
+#else
+    #include <unistd.h>
+#endif
 #include <cstring>
 #include <ctime>
 
