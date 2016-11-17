@@ -32,7 +32,8 @@ namespace vdi_explorer{
             size_t vdiWrite(const void * buf, size_t count);
             
         private:
-            struct __attribute__((packed)) VDIHeader {
+            #pragma pack(1)
+            struct VDIHeader {
                 char title[64];
                 u32 magic;
                 u16 majorVer, minorVer;

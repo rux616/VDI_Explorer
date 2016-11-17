@@ -6,6 +6,7 @@
 #include <cctype>
 #include <locale>
 #include <string>
+#include <vector>
 
 #include <iostream>
 
