@@ -8,6 +8,10 @@
  * Purpose:     Contains the implementation of the interface class.
  -------------------------------------------------------------------------------------------------*/
 
+ // Define a preprocessor variable so that the Microsoft VC compiler doesn't yell about attempting to
+ // use an "insecure" function. (_open, _read, _write, _close, _lseek)
+#define _CRT_SECURE_NO_WARNINGS 1
+
 #include "constants.h"
 #include "ext2.h"
 #include "interface.h"

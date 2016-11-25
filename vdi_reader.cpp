@@ -8,6 +8,10 @@
  * Purpose:     Contains the implementation of the vdi_reader class.
  -------------------------------------------------------------------------------------------------*/
 
+// Define a preprocessor variable so that the Microsoft VC compiler doesn't yell about attempting to
+// use an "insecure" function. (_open, _read, _write, _close, _lseek)
+#define _CRT_SECURE_NO_WARNINGS 1
+
 #include "vdi_reader.h"
 #include "datatypes.h"
 #include <iostream>
@@ -20,6 +24,14 @@
     #include <unistd.h>
 #endif
 #include <cstring>
+
+#ifdef _WIN32
+#define open _open
+#define read _read
+#define write _write
+#define close _close
+#define lseek _lseek
+#endif // _WIN32
 
 //#define DEBUG_VDI_WRITE_DISABLED
 #define DEBUG_VDI_OUTPUT_TRANSLATION
@@ -94,6 +106,7 @@ namespace vdi_explorer{
         
         // Open the file and verify that it was opened successfully.
         fd = ::open(fileName.c_str(), O_RDWR);
+            
         if (fd == -1)
         {
             cout << "Error opening file.\n";
@@ -101,7 +114,7 @@ namespace vdi_explorer{
         }
         
         // Read the header, then verify its size and signature.
-        size_t nBytes = read(fd, &hdr, sizeof(VDIHeader));
+        size_t nBytes = ::read(fd, &hdr, sizeof(VDIHeader));
         if (nBytes != sizeof(VDIHeader) || hdr.magic != 0xbeda107f)
         {
             cout << "Unexpected header size or the magic number has lost its magic.\n";
@@ -209,7 +222,7 @@ namespace vdi_explorer{
                 // written as well.
                 #ifndef DEBUG_VDI_WRITE_DISABLED
                 ::lseek(fd, hdr.offsetPages + i * 4096, SEEK_SET);
-                ::write(fd, pageMap + i * 1024, chunkSize);
+                ::write(fd, pageMap + i * 1024, (s32)chunkSize);
                 #endif
                 mustWriteHeader = true;
             }
@@ -259,7 +272,7 @@ namespace vdi_explorer{
         else if (anchor == SEEK_CUR)
             location = cursor + offset;
         else 
-            location = hdr.diskSize + offset;
+            location = (off_t)(hdr.diskSize) + offset;
         if (location < 0 || (u64)location >= hdr.diskSize)
             location = -1;
         else
@@ -304,7 +317,7 @@ namespace vdi_explorer{
             else
             {
                 ::lseek(fd, location, SEEK_SET);
-                ::read(fd, ((u8 *)buf) + nBytes, chunkSize);
+                ::read(fd, ((u8 *)buf) + nBytes, (u32)chunkSize);
             }
             // Update the cursor to the new position, augment the number of bytes read, and reduce
             // the number of bytes yet to be read.
@@ -367,7 +380,7 @@ namespace vdi_explorer{
             }
             #ifndef DEBUG_VDI_WRITE_DISABLED
             ::lseek(fd, location, SEEK_SET);
-            ::write(fd, ((u8 *)buf) + nBytes, chunkSize);
+            ::write(fd, ((u8 *)buf) + nBytes, (u32)chunkSize);
             #endif
             // Update the cursor to the new position, augment the number of bytes written, and
             // reduce the number of bytes yet to be written.
@@ -426,7 +439,7 @@ namespace vdi_explorer{
             
             // Read the page map chunk from disk.
             ::lseek(fd, hdr.offsetPages + 4096 * chunkNum, SEEK_SET);
-            ::read(fd, pageMap + 1024 * chunkNum, chunkSize);
+            ::read(fd, pageMap + 1024 * chunkNum, (u32)chunkSize);
             pageBitmap[chunkNum / 8] |= ( 1 << (chunkNum % 8));
         }
         

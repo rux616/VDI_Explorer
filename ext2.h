@@ -237,7 +237,6 @@ namespace vdi_explorer
             
             size_t block_size_actual = EXT2_BLOCK_BASE_SIZE;
             size_t max_file_size = EXT2_MAX_ABS_FILE_SIZE;
-            
             ext2_block_group_desc * bgdTable = nullptr;
             
             // Keep track of where the superblock starts.
