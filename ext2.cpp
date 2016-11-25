@@ -88,8 +88,10 @@ namespace vdi_explorer
         
         // Calculate and verify the number of block groups in the partition.
         u32 nBlockGroupCalc1, nBlockGroupCalc2;
-        nBlockGroupCalc1 = (float)superblock.s_blocks_count / superblock.s_blocks_per_group + 0.5;
-        nBlockGroupCalc2 = (float)superblock.s_inodes_count / superblock.s_inodes_per_group + 0.5;
+        nBlockGroupCalc1 = (int)(((float)superblock.s_blocks_count / superblock.s_blocks_per_group)
+                                 + 0.5);
+        nBlockGroupCalc2 = (int)(((float)superblock.s_inodes_count / superblock.s_inodes_per_group)
+                                 + 0.5);
         if (nBlockGroupCalc1 != nBlockGroupCalc2)
         {
             cout << "Block group calculation mismatch.";
