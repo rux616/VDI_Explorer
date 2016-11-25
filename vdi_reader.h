@@ -32,6 +32,10 @@ namespace vdi_explorer{
             size_t vdiWrite(const void * buf, size_t count);
             
         private:
+            // Pushes the current data alignment onto stack for later retrieval.
+            #pragma pack(push)
+            // Sets the data alignment to 1 byte to make sure that when this structure is read
+            // directly from disk everything goes into its proper place in memory.
             #pragma pack(1)
             struct VDIHeader {
                 char title[64];
@@ -46,6 +50,8 @@ namespace vdi_explorer{
                 u8 thisUUID[16], lastSnapUUID[16], linkUUID[16], parentUUID[16],
                     padding1[56]; 
             };
+            // Retrieve the former data alignment from the stack.
+            #pragma pack(pop)  // TODO: Check documentation.
             
             // struct VDIFile {
             //     VDIHeader hdr;

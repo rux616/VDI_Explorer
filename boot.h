@@ -13,6 +13,11 @@ const u16 BOOT_SECTOR_MAGIC = 0xaa55;
 // 516 bytes, which is 4 too many.
 //
 // note: you want entry 0 in partitionTable.
+
+// Pushes the current data alignment onto stack for later retrieval.
+#pragma pack(push)
+// Sets the data alignment to 1 byte to make sure that when this structure is read directly from
+// disk everything goes into its proper place in memory.
 #pragma pack(1)
 struct BootSector {
     // an entry in the partition table. the unused entries really hold information,
@@ -29,5 +34,7 @@ struct BootSector {
     PartitionEntry partitionTable[4];
     u16 magic;
 };
+// Retrieve the former data alignment from the stack.
+#pragma pack(pop) // TODO: Check documentation.
 
 #endif
