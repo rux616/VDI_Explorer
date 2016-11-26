@@ -73,7 +73,7 @@ namespace vdi_explorer
         block_size_actual = EXT2_BLOCK_BASE_SIZE << superblock.s_log_block_size;
         
         // Calculate the max allowable file size.
-        u16 dwords_per_block = block_size_actual / 4;
+        u16 dwords_per_block = (u16)block_size_actual / 4;
         u64 max_file_size_by_block = (dwords_per_block * dwords_per_block * dwords_per_block +
                                       dwords_per_block * dwords_per_block +
                                       dwords_per_block +
@@ -453,12 +453,12 @@ namespace vdi_explorer
         // The file will use at least file_size / block_size_actual number of blocks.  Because this
         // uses integer division, the decimal is cut off, hence we use modulus to determine if the
         // block count needs to be expanded by one to compensate. A.k.a poor man's ceiling function.
-        u32 raw_num_blocks_needed = (file_size % block_size_actual ?
-                                     file_size / block_size_actual + 1 :
-                                     file_size / block_size_actual);
+        u32 raw_num_blocks_needed = (u32)(file_size % block_size_actual ?
+                                          file_size / block_size_actual + 1 :
+                                          file_size / block_size_actual);
         
         // Housekeeping variables to help keep calculations from being as stupidly long.
-        u32 s_num_block_pointers = block_size_actual / EXT2_BLOCK_POINTER_SIZE;
+        u32 s_num_block_pointers = (u32)block_size_actual / EXT2_BLOCK_POINTER_SIZE;
         u32 d_num_block_pointers = s_num_block_pointers * s_num_block_pointers;
         
         // Establish a counter for the total number of blocks that will be needed when all support
@@ -542,7 +542,7 @@ namespace vdi_explorer
                                       utility::nearest_mult_four(EXT2_DIR_BASE_SIZE + directory_entries.back().name_len);
         
         // Calculate the number of bytes needed to store an ext2_dir_entry structure for the file.
-        size_t dir_block_space_needed = utility::nearest_mult_four(EXT2_DIR_BASE_SIZE + filename_to_write.length());
+        size_t dir_block_space_needed = utility::nearest_mult_four(EXT2_DIR_BASE_SIZE + (s32)(filename_to_write.length()));
 
         // If the number of bytes needed exceeds those available, add 1 to the total number of
         // needed blocks to account for the extra block needed for the directory entry.
@@ -755,7 +755,7 @@ namespace vdi_explorer
         vector<u32> ti_blocks_written;
         
         // Establish a variable to keep track of the indirect block index.
-        u32 indirect_block_index = blocks_to_write.size() - supporting_blocks_needed; 
+        u32 indirect_block_index = (u32)(blocks_to_write.size()) - supporting_blocks_needed; 
         
         // Check if there is a need to write the singly indirect block.
         if (blocks_to_write.size() > EXT2_INODE_NBLOCKS_DIR)
@@ -765,9 +765,10 @@ namespace vdi_explorer
             u32 blocks_index = EXT2_INODE_NBLOCKS_DIR;
             
             // Determine the total number of singly indirect blocks that will need to be written.
-            u32 num_s_blocks_to_write = ((blocks_to_write.size() - EXT2_INODE_NBLOCKS_DIR) % s_num_block_pointers ?
-                                         (blocks_to_write.size() - EXT2_INODE_NBLOCKS_DIR) / s_num_block_pointers + 1 :
-                                         (blocks_to_write.size() - EXT2_INODE_NBLOCKS_DIR) / s_num_block_pointers);
+            u32 num_s_blocks_to_write = 
+                (((u32)(blocks_to_write.size()) - EXT2_INODE_NBLOCKS_DIR) % s_num_block_pointers ?
+                 ((u32)(blocks_to_write.size()) - EXT2_INODE_NBLOCKS_DIR) / s_num_block_pointers + 1 :
+                 ((u32)(blocks_to_write.size()) - EXT2_INODE_NBLOCKS_DIR) / s_num_block_pointers);
             
             // Write all the singly indirect blocks at once.
             for (u32 i = 0; i < num_s_blocks_to_write; i++)
@@ -805,7 +806,7 @@ namespace vdi_explorer
                 indirect_block_index++;
                 
                 // Increment the block index.
-                blocks_index += bytes_to_copy / EXT2_BLOCK_POINTER_SIZE;
+                blocks_index += (u32)(bytes_to_copy / EXT2_BLOCK_POINTER_SIZE);
             }
             
             // Check if we need to write doubly indirect blocks.
@@ -813,9 +814,10 @@ namespace vdi_explorer
             {
                 // Determine the total number of doubly indirect blocks that will need to be
                 // written.
-                u32 num_d_blocks_to_write = ((si_blocks_written.size() - 1) % s_num_block_pointers ?
-                                             (si_blocks_written.size() - 1) / s_num_block_pointers + 1 :
-                                             (si_blocks_written.size() - 1) / s_num_block_pointers);
+                u32 num_d_blocks_to_write = 
+                    (((u32)(si_blocks_written.size()) - 1) % s_num_block_pointers ?
+                     ((u32)(si_blocks_written.size()) - 1) / s_num_block_pointers + 1 :
+                     ((u32)(si_blocks_written.size()) - 1) / s_num_block_pointers);
                 
                 // Write all the doubly indirect blocks at once.
                 for (u32 i = 0; i < num_d_blocks_to_write; i++)
@@ -862,9 +864,10 @@ namespace vdi_explorer
                 {
                     // Determine the total number of doubly indirect blocks that will need to be
                     // written.
-                    u32 num_t_blocks_to_write = ((di_blocks_written.size() - 1) % s_num_block_pointers ?
-                                                 (di_blocks_written.size() - 1) / s_num_block_pointers + 1 :
-                                                 (di_blocks_written.size() - 1) / s_num_block_pointers);
+                    u32 num_t_blocks_to_write = 
+                        (((u32)(di_blocks_written.size()) - 1) % s_num_block_pointers ?
+                         ((u32)(di_blocks_written.size()) - 1) / s_num_block_pointers + 1 :
+                         ((u32)(di_blocks_written.size()) - 1) / s_num_block_pointers);
                     
                     // Write all the triply indirect blocks at once.
                     for (u32 i = 0; i < num_t_blocks_to_write; i++)
@@ -1009,8 +1012,13 @@ namespace vdi_explorer
         file_inode.i_uid = EXT2_INODE_DEFAULT_UID;
         file_inode.i_gid = EXT2_INODE_DEFAULT_GID;
         
-        // Set the size.
-        file_inode.i_size = file_size;
+        // Check if the file size is larger than that handled by 32-bit integers.
+        if (file_size > UINT32_MAX)
+            // If it is, clamp the size to the maximum 32-bit integer size.
+            file_inode.i_size = UINT32_MAX;
+        else
+            // Otherwise, simply set the file size.
+            file_inode.i_size = (u32)file_size;
         
         // Get the current Unix epoch time.
         // NOTE: This is not portable.
@@ -1022,17 +1030,17 @@ namespace vdi_explorer
         file_inode.i_links_count = 1;
         
         // Set the number of 512-byte blocks used to store this file and its data.
-        file_inode.i_blocks = total_num_blocks_needed * (block_size_actual / EXT2_INODE_IBLOCKS_SIZE);
+        file_inode.i_blocks = total_num_blocks_needed * ((u32)block_size_actual / EXT2_INODE_IBLOCKS_SIZE);
         
         // The total number of blocks needed may be off if the directory block pointing to the file
         // has insufficient space left to store the ext2_dir_entry structure referencing this file.
         // This calculation compensates for that.
-        file_inode.i_blocks -= (additional_dir_block_needed == true ? block_size_actual / EXT2_INODE_IBLOCKS_SIZE : 0);
+        file_inode.i_blocks -= (additional_dir_block_needed == true ? (u32)block_size_actual / EXT2_INODE_IBLOCKS_SIZE : 0);
         
         // Set the access/creation/modification times.
-        file_inode.i_atime = current_time;
-        file_inode.i_ctime = current_time;
-        file_inode.i_mtime = current_time;
+        file_inode.i_atime = (u32)current_time;
+        file_inode.i_ctime = (u32)current_time;
+        file_inode.i_mtime = (u32)current_time;
         
         // Set the direct block pointers.
         for (u8 i = 0; i < EXT2_INODE_NBLOCKS_DIR && i < blocks_to_write.size(); i++)
@@ -1103,11 +1111,11 @@ namespace vdi_explorer
             
             // Adjust the record length of the file's directory entry so it goes to the end of the
             // directory block.
-            file_dir_entry.rec_len = dir_block_space_left;
+            file_dir_entry.rec_len = (u16)dir_block_space_left;
             
             // Seek to the modified rec_len of the current last directory entry on disk.
             vdi->vdiSeek(blockToOffset(dir_block_num) + 
-                             block_size_actual - 
+                             (off_t)block_size_actual - 
                              directory_entries.back().rec_len + 
                              sizeof(directory_entries.back().inode),
                          SEEK_SET);
@@ -1135,7 +1143,7 @@ namespace vdi_explorer
             
             // Adjust the record length of the file's directory entry so it goes to the end of the
             // directory block.
-            file_dir_entry.rec_len = block_size_actual;
+            file_dir_entry.rec_len = (u16)block_size_actual;
             
             // Zero out the write buffer to ensure any garbage left behind is gone.
             memset(write_buffer, 0, block_size_actual);
@@ -1152,10 +1160,10 @@ namespace vdi_explorer
             vdi->vdiWrite(write_buffer, block_size_actual);
             
             // Update the inode size field to account for the additional directory block.
-            dir_inode.i_size += block_size_actual;
+            dir_inode.i_size += (u32)block_size_actual;
             
             // Update the inode blocks count.
-            dir_inode.i_blocks += block_size_actual / EXT2_INODE_IBLOCKS_SIZE;
+            dir_inode.i_blocks += (u32)(block_size_actual / EXT2_INODE_IBLOCKS_SIZE);
             
             // Add the new directory block to the i_block array.  This should be the final entry in
             // the blocks_to_write vector.
@@ -1164,8 +1172,8 @@ namespace vdi_explorer
         }
         
         // TODO Update inode access and modification times.
-        dir_inode.i_atime = current_time;
-        dir_inode.i_mtime = current_time;
+        dir_inode.i_atime = (u32)current_time;
+        dir_inode.i_mtime = (u32)current_time;
         
         // TODO Write the updated inode back to the inode table.
         vdi->vdiSeek(inodeToOffset(dir_inode_num), SEEK_SET);
@@ -1241,7 +1249,7 @@ namespace vdi_explorer
         }
         
         // Modify the last write time (in Unix epoch time).
-        superblock.s_wtime = current_time;
+        superblock.s_wtime = (u32)current_time;
         /***   End modify superblock in memory.   ***/
         
         
@@ -2106,7 +2114,7 @@ namespace vdi_explorer
         // Set the majority of the fields in the the to_return variable.
         to_return.inode = inode_number;
         to_return.file_type = filetype;
-        to_return.name_len = filename.length();
+        to_return.name_len = (u8)(filename.length());
         to_return.name.assign(filename);
         
         // Calculate the record length and then pad it to make sure it aligns to a 4-byte boundary.
@@ -2197,7 +2205,7 @@ namespace vdi_explorer
         {
             // Access byte number i/BITS_PER_BYTE, bitshift it 1 to the left then bitwise OR it with
             // whatever the bitmap vector value is at index i.
-            bitmap_block_buffer[i / BITS_PER_BYTE] = (bitmap_block_buffer[i / BITS_PER_BYTE] << 1) | bitmap_vector[i];
+            bitmap_block_buffer[i / BITS_PER_BYTE] = (bool)(bitmap_block_buffer[i / BITS_PER_BYTE] << 1) | (bool)(bitmap_vector[i]);
         }
         
         // Seek to and write the bitmap to disk.
