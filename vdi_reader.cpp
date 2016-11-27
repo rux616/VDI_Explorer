@@ -54,21 +54,23 @@ namespace vdi_explorer{
     {
         vdiOpen(fs);
         
-        // Debug info.
+        #ifdef _DEBUG
         cout << "VDI Header Information:" << endl;
         cout << "Dynamic/Static: " << (hdr.imageType == 1 ? "1 - dynamic" : "2 - static") << endl;
         cout << "MBR Start Offset: " << hdr.offsetData << endl; //2097152 - Where MBR is located
         cout << "Magic Number: " << hdr.magic << endl; // Image Signature
-        cout << "Header Size: " << hdr.headerSize << endl; 
-        cout << "Offset Pages: " << hdr.offsetPages << endl; 
-        cout << "Disk Size: " << hdr.diskSize << endl; 
-        cout << "Sector Size: " << hdr.sectorSize<< endl; 
-        cout << "Page Size: " << hdr.pageSize<< endl; 
-        cout << "Page Extra: " << hdr.pageExtra<< endl; 
-        cout << "Total Pages: " << hdr.totalPages<< endl; // offsetBlocks and blocksInHDD
+        cout << "Header Size: " << hdr.headerSize << endl;
+        cout << "Offset Pages: " << hdr.offsetPages << endl;
+        cout << "Disk Size: " << hdr.diskSize << endl;
+        cout << "Sector Size: " << hdr.sectorSize << endl;
+        cout << "Page Size: " << hdr.pageSize << endl;
+        cout << "Page Extra: " << hdr.pageExtra << endl;
+        cout << "Total Pages: " << hdr.totalPages << endl; // offsetBlocks and blocksInHDD
         cout << "Pages Allocated: " << hdr.pagesAllocated << endl;
-        
+
         cout << endl;
+        #endif // _DEBUG
+
     }
     
     /*----------------------------------------------------------------------------------------------
@@ -89,11 +91,10 @@ namespace vdi_explorer{
      *          variables.
      * Input:   const std::string fileName, holds the filename to be read.
      * Output:  Nothing.
-     
-     * @TODO    Magic numbers >> consts
-     * @TODO    More comments.
-     * @TODO    Make actual exceptions, not simply generic ones.
     ----------------------------------------------------------------------------------------------*/
+    // TODO: Magic numbers >> consts
+    // TODO: More comments.
+    // TODO: Make actual exceptions, not simply generic ones.
     void vdi_reader::vdiOpen(const std::string fileName)
     {
         // Open the file and read the header.
@@ -191,10 +192,9 @@ namespace vdi_explorer{
      * Purpose: Determines if the VDI header has been modified, writes it back to the file if it has
      *          been, then closes the VDI file and deallocates the supporting variables.
      * Input:   Nothing.
-     * Output:  Nothing.
-     
-     * @TODO:   Turn the magic numbers into constants.
+     * Output:  Nothing.     
     ----------------------------------------------------------------------------------------------*/
+    // TODO: Turn the magic numbers into constants.
     void vdi_reader::vdiClose()
     {
         // Keep track of whether the header needs to be written.
@@ -205,10 +205,10 @@ namespace vdi_explorer{
         size_t chunkSize;
         
         // Scan through dirtyBitmap and write any modified chunks of the page map to disk.
-        // @TODO change the name of 'i' to something a little more descriptive.
+        // TODO: change the name of 'i' to something a little more descriptive.
         for (u32 i = 0; i < bitmapSize; i++)
         {
-            // @TODO Add comment to describe exactly what this line does.
+            // TODO: Add comment to describe exactly what this line does.
             if (dirtyBitmap[i / 8] & (1 << (i % 8)))
             {
                 // Calculate the chunk size and clamp it to 4096 if necessary.
@@ -406,9 +406,8 @@ namespace vdi_explorer{
      * Purpose: Performs the virtual-to-physical translation.
      * Input:   Nothing.
      * Output:  off_t, holds the offset to the actual data on disk.
-     
-     * @TODO    Yet again, turn the magic numbers into well-named constants.
     ----------------------------------------------------------------------------------------------*/
+    // TODO: Yet again, turn the magic numbers into well-named constants.
     off_t vdi_reader::vdiTranslate()
     {
         u32 pageNum;
@@ -421,7 +420,7 @@ namespace vdi_explorer{
         }
         
         // Compute the page number and offset.
-        // @TODO look into creating a function to perform this as a bitshift.
+        // TODO: look into creating a function to perform this as a bitshift.
         pageNum = cursor / hdr.pageSize;
         offset = cursor - pageNum * hdr.pageSize;
         
@@ -464,11 +463,10 @@ namespace vdi_explorer{
      * Type:    Function
      * Purpose: Allocates a new page frame in the VDI file.
      * Input:   Nothing.
-     * Output:  Nothing.
-     
-     * @TODO    Turn the magic numbers into constants.
-     * @TODO    More and better comments.  Explain exactly what's going on in this function.
+     * Output:  Nothing.     
     ----------------------------------------------------------------------------------------------*/
+    // TODO: Turn the magic numbers into constants.
+    // TODO: More and better comments.  Explain exactly what's going on in this function.
     void vdi_reader::vdiAllocatePageFrame()
     {
         // Add page frame.

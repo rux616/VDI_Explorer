@@ -57,10 +57,9 @@ namespace utility
      *          an already-trimmed string for best results.
      * Input:   const string & delimiter, contains the string to use as the delimiter.
      * Output:  vector<string>, containing the tokens that the string was broken up into.
-     *
-     * @TODO    add quote handling capability
-     * @TODO    add escape character ('\') handling
     ----------------------------------------------------------------------------------------------*/
+    // TODO: add quote handling capability
+    // TODO: add escape character ('\') handling
     vector<string> tokenize(const string & to_tokenize, const string & delimiter)
     {
         vector<string> to_return;

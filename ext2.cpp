@@ -57,10 +57,10 @@ namespace vdi_explorer
         vdi->vdiSeek(0, SEEK_SET);
         vdi->vdiRead(&bootSector, 512);
         
-        // Debug info.
+        #ifdef _DEBUG
         print_bootsector();
-        // End debug info.
-        
+        #endif // _DEBUG
+
         // Determine the start of the superblock.
         superblock_start = bootSector.partitionTable[0].firstSector * VDI_SECTOR_SIZE +
                            EXT2_SUPERBLOCK_OFFSET;
@@ -119,24 +119,24 @@ namespace vdi_explorer
                           blockToOffset(2) :
                           blockToOffset(1);
         
-        // Debug info.
+        #ifdef _DEBUG
         cout << "BGD Table Start: " << bgd_table_start << endl;
-        // End debug info.
+        #endif // _DEBUG
         
         // Read the block group descriptor table into memory.
         vdi->vdiSeek(bgd_table_start, SEEK_SET);
         vdi->vdiRead(bgdTable, sizeof(ext2_block_group_desc) * numBlockGroups);
         
-        // Debug info.
+        #ifdef _DEBUG
         print_bgd_table();
-        // End debug info.
-        
+        #endif // _DEBUG
+
         ext2_inode temp = readInode(2);//18);// 30481);
         
-        // Debug info.
+        #ifdef _DEBUG
         print_inode(&temp);
-        // End debug info.
-        
+        #endif // _DEBUG
+
         // u8 dummy = 0;
         // vdi->vdiSeek(blockToOffset(temp.i_block[0]), SEEK_SET);
         // vdi->vdiRead(&dummy, 1);
@@ -173,10 +173,9 @@ namespace vdi_explorer
      * Input:   Nothing.
      * Output:  vector<fs_entry_posix>, containing a listing of all the files in the present working
      *          directory.
-     *
-     * @TODO    Optimize.
     ----------------------------------------------------------------------------------------------*/
-    vector<fs_entry_posix> ext2::get_directory_contents(void)
+    // TODO: Optimize.
+        vector<fs_entry_posix> ext2::get_directory_contents(void)
     {
         vector<fs_entry_posix> to_return;
         ext2_inode temp_inode;
@@ -244,10 +243,9 @@ namespace vdi_explorer
      * Purpose: Sets the path to and the name of the present working directory.
      * Input:   string, containing the path to and name of the desired working directory.
      * Output:  Nothing.
-     *
-     * @TODO    Clean out dead code. / Make code look pretty.
     ----------------------------------------------------------------------------------------------*/
-    void ext2::set_pwd(const string & desired_pwd)
+    // TODO: Clean out dead code. / Make code look pretty.
+        void ext2::set_pwd(const string & desired_pwd)
     {
         // get pwd inode
         // parse directory inode
@@ -297,16 +295,21 @@ namespace vdi_explorer
         u32 file_inode = 0;
         if (file_entry_exists(file_to_read, file_inode) == true)
         {
+            #ifdef _DEBUG
             cout << "debug >> ext2::file_read >> file exists\n";
+            #endif // _DEBUG
             
             // Get the file size.
             size_t file_size = readInode(file_inode).i_size;
             
             // Unroll the block chain where the file resides.
             list<u32> file_block_list = make_block_list(file_inode);
+            #ifdef _DEBUG
             cout << "debug (ext2::file_read) number of blocks: " << file_block_list.size() << endl;
+            cout << "debug: hit enter to continue" << endl;
             cin.ignore(1);
-            
+            #endif // _DEBUG
+
             // Set up an iterator to go through the block list.
             list<u32>::iterator iter = file_block_list.begin();
             
@@ -318,7 +321,7 @@ namespace vdi_explorer
             char * read_buffer = new char[block_size_actual];
 
             // Loop until the whole file has been read.
-            // @TODO determine if a (iter != file_block_list.end()) condition should be added.
+            // TODO: determine if a (iter != file_block_list.end()) condition should be added.
             while (bytes_read < file_size)
             {
                 // Determine how many bytes to read.  Read a full block if possible, otherwise read
@@ -346,7 +349,9 @@ namespace vdi_explorer
         }
         else
         {
+            #ifdef _DEBUG
             cout << "debug >> ext2::file_read >> file does not exist\n";
+            #endif // DEBUG
             // The file does not exist, so return false.
             return false;
         }
@@ -447,8 +452,8 @@ namespace vdi_explorer
         
         /***   Determine how many blocks the file will take up.   ***/
         // NOTE: This section may be more useful as a function.
-        // @TODO verify mathy things
-        // @TODO optimize, maybe even rework the whole algorithm
+        // TODO: verify mathy things
+        // TODO: optimize, maybe even rework the whole algorithm
         
         // The file will use at least file_size / block_size_actual number of blocks.  Because this
         // uses integer division, the decimal is cut off, hence we use modulus to determine if the
@@ -594,7 +599,7 @@ namespace vdi_explorer
         // Determine what block group the directory inode is in.
         u32 dir_inode_block_group_num = inodeToBlockGroup(dir_inode_num);
         
-        // @TODO Decide if this should simply be read in during object construction.
+        // TODO: Decide if this should simply be read in during object construction.
         vector<vector<bool>> block_group_block_bitmaps; // vector-inception...
         
         // Establish a vector to keep track of "dirty" block group block bitmaps that will need to
@@ -717,7 +722,7 @@ namespace vdi_explorer
             // remainder of the buffer is zeroed out.
             if (file_size - bytes_written < block_size_actual)
             {
-                // @TODO Verify that numbers do not suffer from an off-by-1 error.
+                // TODO: Verify that numbers do not suffer from an off-by-1 error.
                 memset(&(input_file_buffer[file_size - bytes_written]),
                        0,
                        block_size_actual - (file_size - bytes_written));
@@ -737,7 +742,7 @@ namespace vdi_explorer
         
         
         /***   Record indirect blocks.   ***/
-        // @TODO This NEEDS to be its own function, it's too complicated.
+        // TODO: This NEEDS to be its own function, it's too complicated.
         
         // Declare and allocate a write buffer.
         s8 * write_buffer = nullptr;
@@ -1015,6 +1020,7 @@ namespace vdi_explorer
         // Check if the file size is larger than that handled by 32-bit integers.
         if (file_size > UINT32_MAX)
             // If it is, clamp the size to the maximum 32-bit integer size.
+            // TODO: Check if inode i_size is set to unit maximum or lower 32 bits of file size
             file_inode.i_size = UINT32_MAX;
         else
             // Otherwise, simply set the file size.
@@ -1022,7 +1028,7 @@ namespace vdi_explorer
         
         // Get the current Unix epoch time.
         // NOTE: This is not portable.
-        // @TODO Create a utility function to take localtime(time(nullptr)) and make it into Unix
+        // TODO: Create a utility function to take localtime(time(nullptr)) and make it into Unix
         //       epoch time to enable portability.
         time_t current_time = time(nullptr);
         
@@ -1171,11 +1177,11 @@ namespace vdi_explorer
             
         }
         
-        // TODO Update inode access and modification times.
+        // TODO: Update inode access and modification times.
         dir_inode.i_atime = (u32)current_time;
         dir_inode.i_mtime = (u32)current_time;
         
-        // TODO Write the updated inode back to the inode table.
+        // TODO: Write the updated inode back to the inode table.
         vdi->vdiSeek(inodeToOffset(dir_inode_num), SEEK_SET);
         vdi->vdiWrite(&dir_inode, superblock.s_inode_size);
         /***   End build and add directory entry to directory block.   ***/
@@ -1616,8 +1622,10 @@ namespace vdi_explorer
                 // Add the ext2_dir_entry to the vector.
                 to_return.push_back(to_add);
                 
+                #ifdef _DEBUG
                 cout << "\ndebug::ext2::ext2_dir_entry\n";
                 print_dir_entry(to_return.back());
+                #endif // _DEBUG
             }
         }
         
@@ -1650,10 +1658,9 @@ namespace vdi_explorer
      * Purpose: Small function that verifies an inode index is in bounds, then reads it.
      * Input:   u32 inode, containing an inode number.
      * Output:  ext2_inode, containing the read inode.
-     *
-     * @TODO    Set up an actual error to throw instead of the generic one.
     ----------------------------------------------------------------------------------------------*/
-    ext2::ext2_inode ext2::readInode(u32 inode)
+    // TODO: Set up an actual error to throw instead of the generic one.
+        ext2::ext2_inode ext2::readInode(u32 inode)
     {
         if (inode >= superblock.s_inodes_count)
         {
@@ -1794,8 +1801,8 @@ namespace vdi_explorer
         // commented out due to needing to work on other more important things.
         
         /***   START ACTUAL CODE   ***/
-        // @TODO convert code from dir_entry_exists
-        // @TODO do a deep examination of the algorithm to ensure it's appropriate for files
+        // TODO: convert code from dir_entry_exists
+        // TODO: do a deep examination of the algorithm to ensure it's appropriate for files
         
         // tokenize
         // determine if relative path or local path
@@ -1953,7 +1960,7 @@ namespace vdi_explorer
         
         // general algorithm for this function
         // NOTE: THIS IS BRUTE FORCE AND UGLY AND NOT AT ALL OPTIMIZED AND MAKES ME FEEL DIRTY
-        // @TODO: Optimize.
+        // TODO: Optimize.
         // 
         // read inode
         // add direct block pointers to list
@@ -2091,7 +2098,9 @@ namespace vdi_explorer
         if (t_ind_block_buffer)
             delete[] t_ind_block_buffer;
         
+        #ifdef _DEBUG
         cout << "debug (ext2::make_block_list) leaving function\n";
+        #endif // _DEBUG
         
         // Return the block list.
         return to_return;
@@ -2111,7 +2120,7 @@ namespace vdi_explorer
     {
         ext2_dir_entry to_return;
         
-        // Set the majority of the fields in the the to_return variable.
+        // Set the majority of the fields in the to_return variable.
         to_return.inode = inode_number;
         to_return.file_type = filetype;
         to_return.name_len = (u8)(filename.length());
@@ -2133,10 +2142,9 @@ namespace vdi_explorer
      * Input:   const u32 block_num, holds the block that has the bitmap.
      * Input:   const u64 num_bitmap_entries, holds the number of entries in a bitmap.
      * Output:  vector<bool>, holds the more-easily-referenced bitmap.
-     *
-     * @TODO    Create another more abstract version of this and put it in the utility namespace.
     ----------------------------------------------------------------------------------------------*/
-    vector<bool> ext2::read_bitmap(const u32 block_num, const u64 num_bitmap_entries)
+    // TODO: Create another more abstract version of this and put it in the utility namespace.
+        vector<bool> ext2::read_bitmap(const u32 block_num, const u64 num_bitmap_entries)
     {
         vector<bool> to_return;
         
@@ -2183,9 +2191,8 @@ namespace vdi_explorer
      * Input:   const vector<bool> & bitmap_vector, holds the bitmap in vector form.
      * Input:   const u32 block_num, holds the block number to write the bitmap to.
      * Output:  Nothing.
-     *
-     * @TODO    Create another more abstract version of this and put it in the utility namespace.
     ----------------------------------------------------------------------------------------------*/
+    // TODO: Create another more abstract version of this and put it in the utility namespace.
     void ext2::write_bitmap(const vector<bool> & bitmap_vector, const u32 block_num)
     {
         // Create a buffer for writing the bitmap block.

@@ -31,7 +31,7 @@ using namespace vdi_explorer;
 
 namespace vdi_explorer
 {
-    // @TODO Make an actual throwable error.
+    // TODO: Make an actual throwable error.
     interface::interface(ext2 * _file_system)
     {
         file_system = _file_system;
@@ -230,11 +230,9 @@ namespace vdi_explorer
     }
     
     
-    // @TODO format output neatly into appropriately sized columns -> function in utility?
-    // @TODO sort vector by name
-    // @TODO colorize: 
-        // Yellow with black background: Device
-        // Pink: Graphic image file
+    // TODO: Format output neatly into appropriately sized columns -> function in utility?
+    // TODO: Sort vector by name
+    // TODO: Colorize: Yellow with black background: Device; Pink: Graphic image file
     void interface::command_ls(const string & switches)
     {
         vector<fs_entry_posix> file_listing = file_system->get_directory_contents();
