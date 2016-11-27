@@ -10,9 +10,9 @@
  
  
 using namespace std;
-//using namespace vdi_explorer;
+//using namespace vexplorer;
 
-namespace vdi_explorer
+namespace vexplorer
 {
     
 }

@@ -2,7 +2,7 @@
 #define EXCEPTIONS_H
 
 
-namespace vdi_explorer
+namespace vexplorer
 {
     class exceptions
     {

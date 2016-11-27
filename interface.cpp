@@ -27,9 +27,9 @@
 #include <time.h>
 
 using namespace std;
-using namespace vdi_explorer;
+using namespace vexplorer;
 
-namespace vdi_explorer
+namespace vexplorer
 {
     // TODO: Make an actual throwable error.
     interface::interface(ext2 * _file_system)
@@ -508,4 +508,4 @@ namespace vdi_explorer
             return code_unknown;
         }
     }
-} // namespace vdi_explorer
+} // namespace vexplorer

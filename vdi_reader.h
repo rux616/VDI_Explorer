@@ -6,7 +6,7 @@
 #include <string>
 #include <sys/types.h>
 
-namespace vdi_explorer{
+namespace vexplorer{
     class vdi_reader
     {
         public:
@@ -80,6 +80,6 @@ namespace vdi_explorer{
             //       of cursor / hdr.pageSize utilizing bitshift, since it's a
             //       common function.
     };
-} // namespace vdi_explorer
+} // namespace vexplorer
 
 #endif // VDI_READER_H

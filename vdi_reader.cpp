@@ -41,7 +41,7 @@
 
 using namespace std;
 
-namespace vdi_explorer{
+namespace vexplorer{
     /*----------------------------------------------------------------------------------------------
      * Name:    vdi_reader
      * Type:    Function
@@ -485,4 +485,4 @@ namespace vdi_explorer{
         u32 chunkNum = pageNum / 1024;
         dirtyBitmap[chunkNum / 8] |= (1 << (chunkNum % 8));
     }
-} // namespace vdi_explorer
+} // namespace vexplorer

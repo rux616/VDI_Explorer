@@ -32,9 +32,9 @@
  */
 
 using namespace std;
-using namespace vdi_explorer;
+using namespace vexplorer;
 
-namespace vdi_explorer
+namespace vexplorer
 {
     /*----------------------------------------------------------------------------------------------
      * Name:    ext2
@@ -2229,4 +2229,4 @@ namespace vdi_explorer
         // Deallocate the bitmap block buffer.
         delete[] bitmap_block_buffer;
     }
-} // namespace vdi_explorer
+} // namespace vexplorer

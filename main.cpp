@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
         //cout << argc <<" " << argv[0]<< " " << argv[1]<< " " << argv[2] << endl;
         filename = argv[1];
         cout << "Reading file: " << argv[1] << "\n"<< endl;
-        vdi_explorer::vdi_reader fs(filename);
-        vdi_explorer::ext2 e2(&fs);
+        vexplorer::vdi_reader fs(filename);
+        vexplorer::ext2 e2(&fs);
         
         // Debug info.
         // string temp_string; temp_string.assign("      this ||is   a test  ||   ");
@@ -39,10 +39,10 @@ int main(int argc, char *argv[])
         //     cout << "'" << temp_tokens[i] << "'" << endl;
         // End debug info.
 
-        vdi_explorer::interface my_interface(&e2);
+        vexplorer::interface my_interface(&e2);
         my_interface.interactive();
     }
-    //vdi_explorer::vdi_reader fs(filename);
+    //vexplorer::vdi_reader fs(filename);
     
     /*
     do{

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace vdi_explorer
+namespace vexplorer
 {
     class interface
     {
@@ -50,4 +50,4 @@ namespace vdi_explorer
             // pointer to the file system object
             ext2 * file_system = nullptr;
     };
-} // namespace vdi_explorer
+} // namespace vexplorer

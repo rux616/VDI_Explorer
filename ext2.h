@@ -30,7 +30,7 @@ struct fs_entry_posix
     s64 timestamp_modified;
 };
 
-namespace vdi_explorer
+namespace vexplorer
 {
     class ext2
     {
