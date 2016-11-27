@@ -413,6 +413,7 @@ namespace vdi_explorer
         
         
         /***   Determine file size.   ***/
+        // TODO Function-ize?
         // Assume that the file stream is at the beginning and record the position of the current
         // character in the input stream.
         std::streampos stream_size = input_file.tellg();
@@ -451,7 +452,7 @@ namespace vdi_explorer
         
         
         /***   Determine how many blocks the file will take up.   ***/
-        // NOTE: This section may be more useful as a function.
+        // TODO: Function-ize
         // TODO: verify mathy things
         // TODO: optimize, maybe even rework the whole algorithm
         
@@ -578,6 +579,7 @@ namespace vdi_explorer
         
         
         /***   Make a list of free blocks we plan on using.   ***/
+        // TODO: Function-ize
         // Implement functions specifically for reading / writing bitmaps?
         // What about using vector<bool>? Sure!
         //
@@ -688,6 +690,7 @@ namespace vdi_explorer
         
         
         /***   Write file to disk.   ***/
+        // TODO: Function-ize
         // DUN DUN DUN - the crux of the function
         //
         // algorithm
@@ -742,7 +745,7 @@ namespace vdi_explorer
         
         
         /***   Record indirect blocks.   ***/
-        // TODO: This NEEDS to be its own function, it's too complicated.
+        // TODO: Function-ize
         
         // Declare and allocate a write buffer.
         s8 * write_buffer = nullptr;
@@ -918,6 +921,7 @@ namespace vdi_explorer
         
         
         /***   Find free inode.   ***/
+        // TODO: Function-ize
         // Establish a variable to record which inode will be used for the file.
         u32 inode_to_use = 0;
         
@@ -1004,6 +1008,7 @@ namespace vdi_explorer
         
         
         /***   Build inode entry.   ***/
+        // TODO: Function-ize
         // Create the ext2_inode structure.
         ext2_inode file_inode;
         
@@ -1082,6 +1087,7 @@ namespace vdi_explorer
         
         
         /***   Build and add directory entry to directory block.   ***/
+        // TODO: Function-ize
         // This is going to be a bitch as there are two very different scenarios that could be
         // played out:
         //   1) There's enough space left in the block and the ext2_dir_entry just needs to be
@@ -1188,6 +1194,7 @@ namespace vdi_explorer
         
         
         /***   Modify block group descriptor block bitmaps on disk.   ***/
+        // TODO: Function-ize?
         // Use this loop to check for dirty flags on the block group block bitmaps.
         for (u32 i = 0; i < numBlockGroups; i++)
         {
