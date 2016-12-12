@@ -62,10 +62,10 @@ namespace vexplorer
             tokens = utility::tokenize(command_string, DELIMITER_SPACE);
             tokens2 = utility::tokenize(command_string, DELIMITER_FSLASH);
             
-            // Debug info.
+            #ifdef _DEBUG
             for (unsigned int i = 0; i < tokens.size(); i++)
                 cout << "debug (ext2::interface::interactive): " << tokens[i] << endl;
-            // End debug info.
+            #endif // _DEBUG
             
             if (tokens.size() == 0)
                 continue;
@@ -126,7 +126,7 @@ namespace vexplorer
                     command_pwd();
                     break;
                 
-                // Debug
+                #ifdef _DEBUG
                 case code_dump_pwd_inode:
                     command_dump_pwd_inode();
                     break;
@@ -138,7 +138,7 @@ namespace vexplorer
                 case code_dump_inode:
                     command_dump_inode(stoi(tokens[1]));
                     break;
-                // End debug.
+                #endif // _DEBUG
                 
                 case code_unknown:
                     cout << "Unknown command.\n";
@@ -439,7 +439,7 @@ namespace vexplorer
     }
     
     
-    // Debug.
+    #ifdef _DEBUG
     void interface::command_dump_pwd_inode()
     {
         file_system->debug_dump_pwd_inode();
@@ -452,7 +452,7 @@ namespace vexplorer
     {
         file_system->debug_dump_inode(inode_to_dump);
     }
-    // End debug.
+    #endif // _DEBUG
     
     
     interface::command_code interface::hash_command(const string & command)
@@ -489,7 +489,7 @@ namespace vexplorer
         {
             return code_none;
         }
-        // Debug.
+        #ifdef _DEBUG
         else if (command == "dump_pwd_inode")
         {
             return code_dump_pwd_inode;
@@ -502,7 +502,7 @@ namespace vexplorer
         {
             return code_dump_inode;
         }
-        // End debug.
+        #endif // _DEBUG
         else
         {
             return code_unknown;

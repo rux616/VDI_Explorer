@@ -82,9 +82,9 @@ namespace vexplorer
         if (max_file_size_by_block < EXT2_MAX_ABS_FILE_SIZE)
             max_file_size = max_file_size_by_block;
         
-        // Debug info.
+        #ifdef _DEBUG
         print_superblock();
-        // End debug info.
+        #endif // _DEBUG
         
         // Calculate and verify the number of block groups in the partition.
         u32 nBlockGroupCalc1, nBlockGroupCalc2;
@@ -99,11 +99,11 @@ namespace vexplorer
         }
         numBlockGroups = nBlockGroupCalc1;
         
-        // Debug info.
+        #ifdef _DEBUG
         cout << "\n# of Block Groups:\n";
         cout << "Calculation 1: " << nBlockGroupCalc1 << endl;
         cout << "Calculation 2: " << nBlockGroupCalc2 << endl;
-        // End debug info.
+        #endif // _DEBUG
         
         // Allocate and verify an array of pointers to the (as yes unloaded) block group
         // descriptors.

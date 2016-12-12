@@ -451,7 +451,7 @@ namespace vexplorer{
         // Do actual virtual to physical translation.
         offset += pageMap[pageNum] * hdr.pageSize + hdr.offsetData;
         
-        #ifdef DEBUG_VDI_OUTPUT_TRANSLATION
+        #if defined(DEBUG_VDI_OUTPUT_TRANSLATION) && defined(_DEBUG)
         cout << "VDI Translation Offset: " << offset << endl;
         #endif
         
