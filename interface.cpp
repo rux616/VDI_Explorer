@@ -164,7 +164,9 @@ namespace vexplorer
                                const string & copy_from,
                                const string & copy_to)
     {
+        #ifdef _DEBUG
         cout << "*** Implementation in progress.  Bust out the bugspray. ***\n";
+        #endif
         
         fstream os_file;
         
