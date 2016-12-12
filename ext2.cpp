@@ -141,9 +141,11 @@ namespace vexplorer
         // vdi->vdiSeek(blockToOffset(temp.i_block[0]), SEEK_SET);
         // vdi->vdiRead(&dummy, 1);
         
+        #ifdef _DEBUG
         auto temp2 = parse_directory_inode(temp);
         for (u32 i = 0; i < temp2.size(); i++)
             print_dir_entry(temp2[i], true);
+        #endif // _DEBUG
         
         // set the root folder as the initial pwd.
         // pwd_inode.emplace_back(readInode(2));
@@ -351,7 +353,7 @@ namespace vexplorer
         {
             #ifdef _DEBUG
             cout << "debug >> ext2::file_read >> file does not exist\n";
-            #endif // DEBUG
+            #endif // _DEBUG
             // The file does not exist, so return false.
             return false;
         }
