@@ -18,7 +18,7 @@ OBJECTS=$(SOURCES:.cpp=.o)
 MISCDEBUG=*.cpp.*
 
 # Executable
-EXECUTABLE=vdi
+EXECUTABLE=vexplorer
 
 all: $(SOURCES) $(EXECUTABLE)
 	
